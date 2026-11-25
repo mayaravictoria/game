@@ -1,0 +1,312 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROGRAMMING IMPOSTOR</title>
+
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <canvas id="matrix-canvas"></canvas>
+
+    <main class="app-container">
+
+        <!-- LOGIN -->
+        <section id="screen-login" class="screen active">
+            <h1 class="title-cyan-gigante">DEBUG OR DIE</h1>
+            <p class="subtitle">FAÇA SEU LOGIN, SALVE SEU PROGRESSO!</p>
+
+            <input type="email" id="email" placeholder="E-mail">
+            <input type="password" id="password" placeholder="Senha">
+
+            <button class="pixel-btn" onclick="fazerLogin()">[ ACESSAR ]</button>
+        </section>
+
+        <!-- MENU -->
+        <section id="screen-menu" class="screen">
+            <h1 class="title-cyan-gigante">DEBUG OR DIE</h1>
+            <p class="subtitle">> SISTEMA INICIADO</p>
+
+            <div class="config-box">
+                <label for="select-qtd-jogadores">QUANTIDADE DE JOGADORES:</label>
+                <select id="select-qtd-jogadores">
+                    <option value="3">3 Jogadores</option>
+                    <option value="4" selected>4 Jogadores</option>
+                    <option value="5">5 Jogadores</option>
+                    <option value="6">6 Jogadores</option>
+                    <option value="7">7 Jogadores</option>
+                </select>
+
+                <label for="select-qtd-rodadas">QUANTIDADE DE RODADAS:</label>
+                <select id="select-qtd-rodadas">
+                    <option value="3" selected>3 Rodadas</option>
+                    <option value="5">5 Rodadas</option>
+                    <option value="7">7 Rodadas</option>
+                    <option value="10">10 Rodadas</option>
+                </select>
+            </div>
+
+            <div class="menu-buttons">
+                <button class="pixel-btn" onclick="iniciarConfiguracaoPersonagens()">
+                    > NOVO JOGO_
+                </button>
+
+                <button class="pixel-btn" onclick="irParaTela('screen-tutorial')">
+                    > COMO JOGAR_
+                </button>
+
+                <button class="pixel-btn btn-purple" onclick="deslogar()">
+                    [ LOGOUT ]
+                </button>
+            </div>
+
+            <div class="history-area">
+                <button class="pixel-btn toggle-history-btn" onclick="toggleLogs()">
+                    <span id="log-arrow">▼</span> HISTÓRICO DE PARTIDAS
+                </button>
+
+                <div id="logs-container">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>VENCEDOR</th>
+                                <th>PONTOS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-rows"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TUTORIAL -->
+        <section id="screen-tutorial" class="screen">
+            <h1 class="title-magenta">MANUAL DO SISTEMA</h1>
+
+            <div class="terminal-box">
+                <p class="tutorial-title">1. OBJETIVO</p>
+                <p>Descobrir quem é o impostor infiltrado na equipe.</p>
+
+                <p class="tutorial-title">2. A DINÂMICA</p>
+                <p>Todos os desenvolvedores recebem a mesma palavra secreta. O impostor recebe uma palavra diferente.</p>
+
+                <p class="tutorial-title">3. VOTAÇÃO</p>
+                <p>Depois do debate, cada jogador vota em quem acredita ser o impostor.</p>
+
+                <p class="tutorial-title">4. PONTUAÇÃO</p>
+                <p>Quem votar corretamente recebe 4 pontos quando a maioria descobrir o impostor. Se a maioria errar, o impostor recebe 5 pontos.</p>
+
+                <p class="tutorial-title">5. PALPITE FINAL</p>
+                <p>Depois da votação, o impostor tenta adivinhar a palavra dos desenvolvedores. Se acertar, ganha 3 pontos extras.</p>
+            </div>
+
+            <button class="pixel-btn" onclick="irParaTela('screen-menu')">
+                VOLTAR AO MENU
+            </button>
+        </section>
+
+        <!-- ESCOLHA DE PERSONAGENS -->
+        <section id="screen-character-select" class="screen">
+            <h1 class="title-cyan" id="selection-header">
+                ESCOLHA DO JOGADOR 1
+            </h1>
+
+            <div class="custom-name-box">
+                <label for="custom-player-name">
+                    NOME DO JOGADOR:
+                </label>
+
+                <input
+                    type="text"
+                    id="custom-player-name"
+                    oninput="atualizarNomeAoDigitar(this.value)"
+                    placeholder="Digite o nome..."
+                >
+            </div>
+
+            <div class="fifa-card">
+                <div class="fifa-title" id="fifa-char-name">
+                    PERSONAGEM
+                </div>
+
+                <div class="fifa-body">
+                    <button class="fifa-arrow" onclick="prevChar()">◀</button>
+
+                    <img id="fifa-char-img" src="" alt="Personagem">
+
+                    <button class="fifa-arrow" onclick="nextChar()">▶</button>
+                </div>
+
+                <div class="fifa-footer">
+                    <p id="fifa-char-trait"></p>
+                </div>
+            </div>
+
+            <button class="pixel-btn" onclick="confirmarEscolhaPersonagem()">
+                CONFIRMAR ESCOLHA
+            </button>
+        </section>
+
+        <!-- REVELAÇÃO DAS PALAVRAS -->
+        <section id="screen-reveal" class="screen">
+            <h1 class="title-magenta" id="reveal-player-title">
+                VEZ DE: JOGADOR
+            </h1>
+
+            <div class="terminal-box reveal-box">
+                <p>SUA PALAVRA SECRETA:</p>
+
+                <h2 id="secret-word-box">
+                    [ ÁREA SEGURA ]
+                </h2>
+            </div>
+
+            <button
+                class="pixel-btn"
+                id="btn-action-reveal"
+                onclick="gerenciarCliqueRevelar()"
+            >
+                VER PALAVRA
+            </button>
+        </section>
+
+        <!-- DEBATE -->
+        <section id="screen-game" class="screen">
+            <h1 class="title-cyan-gigante">DEBATE EM ANDAMENTO</h1>
+
+            <p class="subtitle" id="round-indicator">
+                RODADA 1 DE 3
+            </p>
+
+            <div class="terminal-box">
+                <p>Discutam entre si e tentem descobrir quem recebeu uma palavra diferente.</p>
+                <p class="tutorial-title">QUANDO TERMINAREM O DEBATE, INICIEM A VOTAÇÃO.</p>
+            </div>
+
+            <button class="pixel-btn" onclick="abrirVotacao()">
+                INICIAR VOTAÇÃO
+            </button>
+
+            <button class="pixel-btn btn-purple" onclick="confirmarSaidaPartida()">
+                SAIR DA PARTIDA
+            </button>
+        </section>
+
+        <!-- VOTAÇÃO -->
+        <section id="screen-voting" class="screen">
+            <h1 class="title-magenta">VOTAÇÃO</h1>
+
+            <p id="vote-progress" class="subtitle">
+                Votos registrados: 0
+            </p>
+
+            <div id="voting-content" class="voting-container"></div>
+
+            <button
+                class="pixel-btn"
+                id="btn-confirm-vote"
+                onclick="registrarVotoAtual()"
+                disabled
+            >
+                CONFIRMAR VOTO
+            </button>
+        </section>
+
+        <!-- RESULTADO E PALPITE DO IMPOSTOR -->
+        <section id="screen-result" class="screen">
+            <h1 class="title-magenta">RESULTADO DA VOTAÇÃO</h1>
+
+            <div id="round-result-text" class="terminal-box result-box"></div>
+
+            <div id="round-points" class="terminal-box"></div>
+
+            <div class="terminal-box guess-box">
+                <h2>ÚLTIMA CHANCE, IMPOSTOR!</h2>
+
+                <p>
+                    Tente adivinhar qual era a palavra dos desenvolvedores.
+                </p>
+
+                <input
+                    type="text"
+                    id="impostor-guess"
+                    placeholder="Digite seu palpite..."
+                    autocomplete="off"
+                >
+
+                <button
+                    class="pixel-btn"
+                    id="btn-guess"
+                    onclick="enviarPalpiteImpostor()"
+                >
+                    ENVIAR PALPITE
+                </button>
+
+                <p id="guess-feedback"></p>
+
+                <!-- A PALAVRA SÓ APARECE DEPOIS DO PALPITE -->
+                <div id="word-reveal" class="word-reveal hidden">
+                    <p>PALAVRA DOS DESENVOLVEDORES:</p>
+                    <h2 id="revealed-dev-word"></h2>
+                </div>
+            </div>
+
+            <button
+                class="pixel-btn"
+                id="btn-continue-round"
+                onclick="continuarAposRodada()"
+                disabled
+            >
+                CONTINUAR
+            </button>
+        </section>
+
+        <!-- PLACAR -->
+        <section id="screen-scoreboard" class="screen">
+            <h1 class="title-cyan-gigante" id="scoreboard-title">
+                PLACAR DA PARTIDA
+            </h1>
+
+            <p class="subtitle" id="scoreboard-subtitle"></p>
+
+            <div id="scoreboard-content" class="scoreboard-container"></div>
+
+            <button
+                class="pixel-btn"
+                id="btn-next-round"
+                onclick="iniciarProximaRodada()"
+            >
+                PRÓXIMA RODADA
+            </button>
+
+            <button
+                class="pixel-btn"
+                id="btn-finish-match"
+                onclick="encerrarCampeonato()"
+            >
+                FINALIZAR E SALVAR
+            </button>
+        </section>
+
+        <!-- CONTAGEM REGRESSIVA -->
+        <div id="countdown-overlay" class="overlay hidden">
+            <div class="countdown-content">
+                <h2 id="chosen-starter">PREPAREM-SE!</h2>
+                <div id="timer-number">3</div>
+                <p>BOA SORTE!</p>
+            </div>
+        </div>
+
+        <div class="version-tag">
+            DEBUG OR DIE | ULTIMATE EDITION
+        </div>
+
+    </main>
+
+    <script src="auth.js"></script>
+</body>
+</html>

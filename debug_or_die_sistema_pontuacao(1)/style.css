@@ -1,0 +1,611 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Press Start 2P', monospace;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+    background: #0d1117;
+    color: #00ffcc;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
+    padding: 20px 0;
+}
+
+#matrix-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    opacity: 0.25;
+    pointer-events: none;
+}
+
+.app-container {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 600px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    text-align: center;
+    margin: auto;
+}
+
+.screen.active {
+    display: flex;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* TÍTULOS */
+
+.title-cyan,
+.title-cyan-gigante {
+    color: #00ffcc;
+    text-shadow: 3px 3px #ff007f;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.title-cyan {
+    font-size: 18px;
+}
+
+.title-cyan-gigante {
+    font-size: clamp(22px, 5vw, 36px);
+    line-height: 1.5;
+}
+
+.title-magenta {
+    color: #ff007f;
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.subtitle {
+    color: #9ca3af;
+    font-size: 10px;
+    text-align: center;
+    line-height: 1.8;
+    margin-bottom: 22px;
+    width: 100%;
+}
+
+/* CAMPOS */
+
+input,
+select {
+    width: 100%;
+    max-width: 380px;
+    padding: 14px;
+    background: #111827;
+    border: 3px solid #00ffcc;
+    color: #ffffff;
+    font-size: 10px;
+    margin-bottom: 15px;
+    text-align: center;
+    outline: none;
+}
+
+input:focus,
+select:focus {
+    border-color: #ff007f;
+    box-shadow: 0 0 10px rgba(255, 0, 127, 0.3);
+}
+
+input::placeholder {
+    color: #9ca3af;
+}
+
+/* BOTÕES */
+
+.pixel-btn,
+.fifa-arrow {
+    background: #111827;
+    color: #00ffcc;
+    border: 3px solid #00ffcc;
+    box-shadow: 4px 4px #ff007f;
+    padding: 14px;
+    font-size: 10px;
+    cursor: pointer;
+    text-align: center;
+    transition: 0.15s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.pixel-btn {
+    width: 100%;
+    max-width: 380px;
+    margin: 8px 0;
+    line-height: 1.6;
+}
+
+.pixel-btn:hover,
+.fifa-arrow:hover {
+    background: #00ffcc;
+    color: #0d1117;
+}
+
+.pixel-btn:active,
+.fifa-arrow:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px #ff007f;
+}
+
+.pixel-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-purple {
+    border-color: #ff007f;
+    color: #ff007f;
+    box-shadow: 4px 4px #00ffcc;
+}
+
+/* MENU */
+
+.config-box {
+    width: 100%;
+    max-width: 380px;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.config-box label {
+    color: #00ffcc;
+    font-size: 9px;
+    line-height: 1.8;
+    margin: 12px 0 8px;
+}
+
+.menu-buttons {
+    width: 100%;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+}
+
+.history-area {
+    width: 100%;
+    max-width: 380px;
+    margin-top: 20px;
+}
+
+.toggle-history-btn {
+    font-size: 9px;
+    border-color: #ff007f;
+    box-shadow: none;
+}
+
+#logs-container {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    width: 100%;
+    background: #111827;
+    border: 2px solid #00ffcc;
+    border-top: none;
+}
+
+#logs-container.show {
+    max-height: 250px;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 8px;
+}
+
+.history-table th,
+.history-table td {
+    border: 1px solid #374151;
+    padding: 10px 5px;
+    text-align: center;
+}
+
+/* TUTORIAL E CAIXAS */
+
+.terminal-box {
+    width: 100%;
+    max-width: 500px;
+    background: #111827;
+    border: 3px solid #00ffcc;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 10px;
+    line-height: 1.8;
+}
+
+.tutorial-title {
+    color: #ff007f;
+    margin: 18px 0 8px;
+}
+
+.tutorial-title:first-child {
+    margin-top: 0;
+}
+
+/* SELEÇÃO DE PERSONAGEM */
+
+.custom-name-box {
+    width: 100%;
+    max-width: 380px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.custom-name-box label {
+    display: block;
+    color: #00ffaa;
+    font-size: 9px;
+    margin-bottom: 10px;
+}
+
+.fifa-card {
+    width: 100%;
+    max-width: 380px;
+    background: linear-gradient(135deg, #1e1b4b, #312e81);
+    border: 4px solid #00ffcc;
+    box-shadow: 6px 6px #ff007f;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    margin: 10px 0 20px;
+}
+
+.fifa-title {
+    font-size: 14px;
+    color: #00ffcc;
+    margin-bottom: 15px;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.fifa-body {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.fifa-body img {
+    width: 140px;
+    height: 140px;
+    object-fit: contain;
+    border: 3px solid #ff007f;
+    background: #111827;
+    image-rendering: pixelated;
+}
+
+.fifa-arrow {
+    padding: 12px;
+    font-size: 14px;
+}
+
+.fifa-footer {
+    width: 100%;
+    background: #111827;
+    border: 2px solid #00ffcc;
+    padding: 12px;
+}
+
+.fifa-footer p {
+    font-size: 8px;
+    color: #d1d5db;
+    line-height: 1.7;
+}
+
+/* REVELAÇÃO */
+
+.reveal-box {
+    padding: 30px 15px;
+}
+
+.reveal-box p {
+    color: #00ffcc;
+    font-size: 9px;
+    margin-bottom: 18px;
+}
+
+#secret-word-box {
+    min-height: 45px;
+    font-size: clamp(15px, 4vw, 22px);
+    color: #ffffff;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+/* VOTAÇÃO COM FOTOS */
+
+.voting-container {
+    width: 100%;
+    max-width: 500px;
+}
+
+.voting-player-title {
+    color: #00ffcc;
+    font-size: 10px;
+    line-height: 1.8;
+    margin-bottom: 20px;
+}
+
+.voting-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.vote-card {
+    min-width: 0;
+    background: #111827;
+    border: 3px solid #374151;
+    padding: 12px 8px;
+    color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: 0.15s;
+}
+
+.vote-card img {
+    width: 100px;
+    height: 100px;
+    max-width: 100%;
+    object-fit: contain;
+    image-rendering: pixelated;
+    background: #0d1117;
+}
+
+.vote-card span {
+    font-size: 9px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.vote-card:hover {
+    border-color: #00ffcc;
+    transform: translateY(-2px);
+}
+
+.vote-card.selected {
+    border-color: #ff007f;
+    background: #252044;
+    box-shadow: 0 0 12px rgba(255, 0, 127, 0.5);
+}
+
+.vote-card.selected span {
+    color: #ff007f;
+}
+
+/* RESULTADO */
+
+.result-box {
+    line-height: 2;
+}
+
+.result-box h2 {
+    color: #ff007f;
+    font-size: 18px;
+    margin: 12px 0;
+}
+
+.text-success {
+    color: #00ffcc;
+    margin-top: 12px;
+}
+
+.text-danger {
+    color: #ff007f;
+    margin-top: 12px;
+}
+
+.points-title {
+    color: #00ffcc;
+    margin-bottom: 12px;
+}
+
+.guess-box h2 {
+    color: #ff007f;
+    font-size: 13px;
+    line-height: 1.8;
+    margin-bottom: 15px;
+}
+
+.guess-box p {
+    font-size: 9px;
+    line-height: 1.8;
+    margin-bottom: 12px;
+}
+
+.word-reveal {
+    margin-top: 20px;
+    border: 2px solid #00ffcc;
+    padding: 15px;
+    background: #0d1117;
+}
+
+.word-reveal p {
+    color: #00ffcc;
+    font-size: 8px;
+}
+
+.word-reveal h2 {
+    color: #ff007f;
+    font-size: 18px;
+    overflow-wrap: anywhere;
+}
+
+/* PLACAR */
+
+.scoreboard-container {
+    width: 100%;
+    max-width: 450px;
+    margin: 10px 0 20px;
+}
+
+.score-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    background: #111827;
+    border: 2px solid #374151;
+    padding: 16px 12px;
+    margin-bottom: 10px;
+    font-size: 9px;
+    line-height: 1.7;
+}
+
+.score-line strong {
+    color: #00ffcc;
+    white-space: nowrap;
+}
+
+.score-line.winner {
+    border-color: #ff007f;
+    box-shadow: 3px 3px #00ffcc;
+}
+
+.score-line.winner strong {
+    color: #ff007f;
+}
+
+/* CONTAGEM REGRESSIVA */
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(13, 17, 23, 0.96);
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.overlay.hidden {
+    display: none !important;
+}
+
+.countdown-content {
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    border: 5px solid #ff007f;
+    background: #111827;
+    padding: 35px 20px;
+    box-shadow: 6px 6px #00ffcc;
+}
+
+.countdown-content h2 {
+    font-size: 13px;
+    color: #00ffcc;
+    line-height: 1.8;
+}
+
+.countdown-content p {
+    font-size: 9px;
+    color: #ffffff;
+}
+
+#timer-number {
+    font-size: 64px;
+    color: #ff007f;
+    text-shadow: 4px 4px #00ffcc;
+    margin: 20px 0;
+}
+
+/* VERSÃO */
+
+.version-tag {
+    position: fixed;
+    bottom: 8px;
+    right: 10px;
+    z-index: 20;
+    font-size: 8px;
+    color: rgba(0, 255, 204, 0.4);
+}
+
+/* RESPONSIVIDADE */
+
+@media (max-width: 480px) {
+    .app-container {
+        padding: 15px;
+    }
+
+    .voting-cards {
+        gap: 8px;
+    }
+
+    .vote-card {
+        padding: 10px 5px;
+    }
+
+    .vote-card img {
+        width: 85px;
+        height: 85px;
+    }
+
+    .vote-card span {
+        font-size: 8px;
+    }
+
+    .terminal-box {
+        padding: 15px;
+    }
+
+    .score-line {
+        font-size: 8px;
+    }
+}
